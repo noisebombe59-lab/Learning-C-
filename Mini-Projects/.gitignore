@@ -1,0 +1,36 @@
+# Сборка и временные файлы .NET
+**/bin/
+**/obj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/x64/
+**/x86/
+
+# Файлы настроек Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+
+# NuGet
+packages/
+**/project.assets.json
+**/project.nuget.cache
+**/[Nn]uget.props
+**/[Nn]uget.targets
+
+# Результаты компиляции
+*.pdb
+*.dll
+*.exe
+*.cache
+
+# Логи (те самые, что лезли у вас в Files/bin/Debug)
+*.log
+**/app_log.txt
+
+# Настройки редакторов
+.idea/
+.vscode/
