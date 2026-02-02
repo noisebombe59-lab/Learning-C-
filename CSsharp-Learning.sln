@@ -76,6 +76,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OOP", "OOP", "{C9E75706-DCF
 		Inheritance-&-Composition-Hierarchy-vs-Flexibility.md = Inheritance-&-Composition-Hierarchy-vs-Flexibility.md
 		Interfaces _Behavior_Contracts_and_Multiple_Implementations.md = Interfaces _Behavior_Contracts_and_Multiple_Implementations.md
 		Polymorphism_Virtual_Methods_and_Overriding.md = Polymorphism_Virtual_Methods_and_Overriding.md
+		тестовый-файл.md = тестовый-файл.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OOP", "OOP", "{F2A21ADF-013B-4392-8663-E2EFA6B1A7D7}"
