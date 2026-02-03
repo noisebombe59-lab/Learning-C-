@@ -10,27 +10,27 @@
 
 Пример синтаксиса:
 
-C#
-
-public class User 
-{
-    private string _login;
-    public User(string login) 
+    C#
+    
+    public class User 
     {
-        if (string.IsNullOrWhiteSpace(login)) throw new Exception("Empty login");
-        _login = login;
+        private string _login;
+        public User(string login) 
+        {
+            if (string.IsNullOrWhiteSpace(login)) throw new Exception("Empty login");
+            _login = login;
+        }
     }
-}
-
-public class Admin : User 
-{
-    private int _level;
-    // base(login) пробрасывает данные в конструктор User
-    public Admin(string login, int level) : base(login) 
+    
+    public class Admin : User 
     {
-        _level = level;
+        private int _level;
+        // base(login) пробрасывает данные в конструктор User
+        public Admin(string login, int level) : base(login) 
+        {
+            _level = level;
+        }
     }
-}
 2. Абстрактные классы и методы (Abstract)
 Инструмент для создания «чертежей», которые нельзя воплотить в объект напрямую.
 
@@ -42,20 +42,20 @@ Abstract Method: Метод без реализации (без {}). Обязы�
 
 Пример синтаксиса:
 
-C#
-
-public abstract class Weapon 
-{
-    public abstract void Fire(); // Нет тела метода
-}
-
-public class Pistol : Weapon 
-{
-    public override void Fire() // Обязательная реализация
+    C#
+    
+    public abstract class Weapon 
     {
-        Console.WriteLine("Pistol shot!");
+        public abstract void Fire(); // Нет тела метода
     }
-}
+    
+    public class Pistol : Weapon 
+    {
+        public override void Fire() // Обязательная реализация
+        {
+            Console.WriteLine("Pistol shot!");
+        }
+    }
 3. Композиция (Composition) — Связь "Has-a" (Содержит)
 Создание сложного объекта путем включения в него других объектов как полей.
 
@@ -65,19 +65,19 @@ public class Pistol : Weapon
 
 Пример синтаксиса:
 
-C#
-
-public class Battery { public int Charge = 100; }
-
-public class Flashlight 
-{
-    private readonly Battery _battery; // Композиция: Фонарик ИМЕЕТ батарейку
-
-    public Flashlight(Battery battery) 
+    C#
+    
+    public class Battery { public int Charge = 100; }
+    
+    public class Flashlight 
     {
-        _battery = battery ?? throw new ArgumentNullException();
+        private readonly Battery _battery; // Композиция: Фонарик ИМЕЕТ батарейку
+    
+        public Flashlight(Battery battery) 
+        {
+            _battery = battery ?? throw new ArgumentNullException();
+        }
     }
-}
 Правила качественного проектирования
 Liskov Substitution (Принцип подстановки): Наследник должен полностью заменять родителя. 
 Если метод принимает Vehicle, он должен работать и с Car, и с Truck, не ломаясь.
