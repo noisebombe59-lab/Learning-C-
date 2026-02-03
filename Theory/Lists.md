@@ -9,11 +9,11 @@ List<T> — динамический массив, который автомат
 • Добавление в конец — O(1) в среднем
 • Вставка/удаление в середине — O(n) (дорого!)
 
-Пример кода
-var fruits = new List<string> { "apple", "banana", "orange" };
-
-fruits.Add("grape");
-Console.WriteLine(fruits[0]); // apple
+    Пример кода
+    var fruits = new List<string> { "apple", "banana", "orange" };
+    
+    fruits.Add("grape");
+    Console.WriteLine(fruits[0]); // apple
 ──────────────────────────────────────────────────────────────────────
 Подключение
 using System.Collections.Generic; // обязательно
@@ -21,77 +21,77 @@ using System.Linq;                // для First(), Where(), ToList() и др.
 ──────────────────────────────────────────────────────────────────────
 Создание и инициализация
 
-// Пустой список
-var list = new List<int>();
-
-// С элементами
-var numbers = new List<int> { 1, 2, 3, 4, 5 };
-
-// С известной начальной ёмкостью (важно для производительности)
-var bigList = new List<string>(capacity: 100_000);
-
-// Из любого IEnumerable
-var range = Enumerable.Range(1, 100).ToList();
+    // Пустой список
+    var list = new List<int>();
+    
+    // С элементами
+    var numbers = new List<int> { 1, 2, 3, 4, 5 };
+    
+    // С известной начальной ёмкостью (важно для производительности)
+    var bigList = new List<string>(capacity: 100_000);
+    
+    // Из любого IEnumerable
+    var range = Enumerable.Range(1, 100).ToList();
 ──────────────────────────────────────────────────────────────────────
 Добавление элементов
 
-fruits.Add("kiwi");                    // в конец
-
-fruits.AddRange(new[] { "mango", "lemon" }); // несколько в конец
-
-fruits.Insert(0, "pineapple");         // по индексу (дорого для больших списков)
-
-fruits.InsertRange(2, new[] { "a", "b" }); // несколько по индексу
+    fruits.Add("kiwi");                    // в конец
+    
+    fruits.AddRange(new[] { "mango", "lemon" }); // несколько в конец
+    
+    fruits.Insert(0, "pineapple");         // по индексу (дорого для больших списков)
+    
+    fruits.InsertRange(2, new[] { "a", "b" }); // несколько по индексу
 ──────────────────────────────────────────────────────────────────────
 Удаление элементов (самое важное на собесе!)
 
-fruits.Remove("banana");               // первое вхождение → возвращает bool
-
-fruits.RemoveAt(0);                    // по индексу
-
-fruits.RemoveRange(1, 3);              // с индекса, сколько штук
-
-// Безопасное удаление по условию
-int removed = fruits.RemoveAll(f => f.Contains("a"));
-
-fruits.Clear();                        // полностью очистить
+    fruits.Remove("banana");               // первое вхождение → возвращает bool
+    
+    fruits.RemoveAt(0);                    // по индексу
+    
+    fruits.RemoveRange(1, 3);              // с индекса, сколько штук
+    
+    // Безопасное удаление по условию
+    int removed = fruits.RemoveAll(f => f.Contains("a"));
+    
+    fruits.Clear();                        // полностью очистить
 
 Важно: никогда не удаляй в foreach — будет InvalidOperationException!
 Используй только RemoveAll для условий.
 ──────────────────────────────────────────────────────────────────────
 Поиск и доступ
 
-string first = fruits[0];              // доступ по индексу O(1)
-fruits[0] = "watermelon";              // изменение по индексу
-
-bool has = fruits.Contains("apple");   // O(n)
-
-int index = fruits.IndexOf("apple");   // первый с начала (-1 если нет)
-
-var found = fruits.Find(x => x.StartsWith("kiwi")); // первый подходящий или default
-
-var all = fruits.FindAll(x => x.Length > 5); // новый List с результатами
-
-bool exists = fruits.Exists(x => x == "admin");
+    string first = fruits[0];              // доступ по индексу O(1)
+    fruits[0] = "watermelon";              // изменение по индексу
+    
+    bool has = fruits.Contains("apple");   // O(n)
+    
+    int index = fruits.IndexOf("apple");   // первый с начала (-1 если нет)
+    
+    var found = fruits.Find(x => x.StartsWith("kiwi")); // первый подходящий или default
+    
+    var all = fruits.FindAll(x => x.Length > 5); // новый List с результатами
+    
+    bool exists = fruits.Exists(x => x == "admin");
 ──────────────────────────────────────────────────────────────────────
 Сортировка и преобразования
 
-fruits.Sort();                         // по умолчанию (для string — по алфавиту)
-
-fruits.Sort((a, b) => a.Length.CompareTo(b.Length)); // своя логика
-
-fruits.Reverse();                      // перевернуть
-
-int[] array = fruits.ToArray();        // в массив
+    fruits.Sort();                         // по умолчанию (для string — по алфавиту)
+    
+    fruits.Sort((a, b) => a.Length.CompareTo(b.Length)); // своя логика
+    
+    fruits.Reverse();                      // перевернуть
+    
+    int[] array = fruits.ToArray();        // в массив
 ──────────────────────────────────────────────────────────────────────
 Свойства
 
-int count = fruits.Count;              // реальное количество элементов
-
-int capacity = fruits.Capacity;        // размер внутреннего массива (≥ Count)
-
-// Оптимизация памяти
-fruits.TrimExcess();                   // уменьшит Capacity ближе к Count
+    int count = fruits.Count;              // реальное количество элементов
+    
+    int capacity = fruits.Capacity;        // размер внутреннего массива (≥ Count)
+    
+    // Оптимизация памяти
+    fruits.TrimExcess();                   // уменьшит Capacity ближе к Count
 ──────────────────────────────────────────────────────────────────────
 Важные правила
 
