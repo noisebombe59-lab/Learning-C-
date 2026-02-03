@@ -5,37 +5,37 @@ Dictionary<TKey, TValue> — коллекция пар «ключ → значе
 Ключи всегда уникальны (дубли не добавляются).
 Под капотом — хеш-таблица.
 
-Пример кода
-var ages = new Dictionary<string, int>();
-ages["Анна"] = 25;
-ages["Борис"] = 30;
-
-Console.WriteLine(ages["Анна"]); // 25
-──────────────────────────────────────────────────────────────────────
-Подключение
-using System.Collections.Generic; // обязательно
-using System.Linq;                // для ToDictionary() и других удобных методов
-──────────────────────────────────────────────────────────────────────
-Создание и инициализация
-
-// Пустой словарь
-var dict = new Dictionary<string, int>();
-
-// С инициализацией
-var capitals = new Dictionary<string, string>
-{
-    ["Россия"] = "Москва",
-    ["Франция"] = "Париж",
-    ["Германия"] = "Берлин"
-};
-
-// Классический стиль
-var scores = new Dictionary<string, int>
-{
-    { "Анна", 95 },
-    { "Борис", 88 }
-};
-──────────────────────────────────────────────────────────────────────
+    Пример кода
+    var ages = new Dictionary<string, int>();
+    ages["Анна"] = 25;
+    ages["Борис"] = 30;
+    
+    Console.WriteLine(ages["Анна"]); // 25
+    ──────────────────────────────────────────────────────────────────────
+    Подключение
+    using System.Collections.Generic; // обязательно
+    using System.Linq;                // для ToDictionary() и других удобных методов
+    ──────────────────────────────────────────────────────────────────────
+    Создание и инициализация
+    
+    // Пустой словарь
+    var dict = new Dictionary<string, int>();
+    
+    // С инициализацией
+    var capitals = new Dictionary<string, string>
+    {
+        ["Россия"] = "Москва",
+        ["Франция"] = "Париж",
+        ["Германия"] = "Берлин"
+    };
+    
+    // Классический стиль
+    var scores = new Dictionary<string, int>
+    {
+        { "Анна", 95 },
+        { "Борис", 88 }
+    };
+    ──────────────────────────────────────────────────────────────────────
 Добавление и изменение
 
 ages["Виктор"] = 22;     // добавит или перезапишет — самый удобный способ
@@ -44,20 +44,20 @@ ages.Add("Дарья", 28);   // бросит исключение, если к�
 
 ages.TryAdd("Анна", 26); // .NET 6+: добавит только если ключа нет (вернёт bool)
 ──────────────────────────────────────────────────────────────────────
-Безопасное чтение (самое важное на собесе!)
-
-// Лучший способ — TryGetValue
-if (ages.TryGetValue("Анна", out int age))
-{
-    Console.WriteLine($"Анне {age} лет");
-}
-else
-{
-    Console.WriteLine("Ключ не найден");
-}
-
-// Значение по умолчанию (.NET 7+)
-int score = scores.GetValueOrDefault("Виктор", 0);
+    Безопасное чтение (самое важное на собесе!)
+    
+    // Лучший способ — TryGetValue
+    if (ages.TryGetValue("Анна", out int age))
+    {
+        Console.WriteLine($"Анне {age} лет");
+    }
+    else
+    {
+        Console.WriteLine("Ключ не найден");
+    }
+    
+    // Значение по умолчанию (.NET 7+)
+    int score = scores.GetValueOrDefault("Виктор", 0);
 ──────────────────────────────────────────────────────────────────────
 Удаление и проверки
 
@@ -67,32 +67,32 @@ bool hasKey = ages.ContainsKey("Анна");   // true/false
 int count = ages.Count;                  // количество пар
 ages.Clear();                            // очистить полностью
 ──────────────────────────────────────────────────────────────────────
-Перебор (итерация)
-
-foreach (var pair in ages)
-{
-    Console.WriteLine($"{pair.Key} → {pair.Value}");
-}
-
-// C# 7+ — распаковка в цикле
-foreach (var (name, age) in ages)
-{
-    Console.WriteLine($"{name} — {age} лет");
-}
-
-// Только ключи или значения
-foreach (string key in ages.Keys) { ... }
-foreach (int value in ages.Values) { ... }
+    Перебор (итерация)
+    
+    foreach (var pair in ages)
+    {
+        Console.WriteLine($"{pair.Key} → {pair.Value}");
+    }
+    
+    // C# 7+ — распаковка в цикле
+    foreach (var (name, age) in ages)
+    {
+        Console.WriteLine($"{name} — {age} лет");
+    }
+    
+    // Только ключи или значения
+    foreach (string key in ages.Keys) { ... }
+    foreach (int value in ages.Values) { ... }
 ──────────────────────────────────────────────────────────────────────
 Полезные однострочники
 
-// Убрать дубли по ключу из списка
-var uniqueUsers = users.ToDictionary(u => u.Id, u => u);
-
-// Группировка в словарь
-var byCountry = users
-    .GroupBy(u => u.Country)
-    .ToDictionary(g => g.Key, g => g.ToList());
+    // Убрать дубли по ключу из списка
+    var uniqueUsers = users.ToDictionary(u => u.Id, u => u);
+    
+    // Группировка в словарь
+    var byCountry = users
+        .GroupBy(u => u.Country)
+        .ToDictionary(g => g.Key, g => g.ToList());
 ──────────────────────────────────────────────────────────────────────
 Важные правила
 
