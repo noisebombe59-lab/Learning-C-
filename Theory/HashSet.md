@@ -17,15 +17,15 @@ using System.Linq;                    // для ToHashSet() и др.
 ──────────────────────────────────────────────────────────────────────
 СОЗДАНИЕ И ИНИЦИАЛИЗАЦИЯ
 ──────────────────────────────────────────────────────────────────────
-var set = new HashSet<string>();
-
-// C# 9+ — красивый синтаксис
-var banned = new HashSet<string> { "127.0.0.1", "192.168.1.1" };
-
-// Из любого IEnumerable (самый частый кейс!)
-var uniqueIds = new HashSet<int>(largeListOfIds);
-// или ещё короче (.NET 6+)
-var uniqueNames = namesList.ToHashSet();
+    var set = new HashSet<string>();
+    
+    // C# 9+ — красивый синтаксис
+    var banned = new HashSet<string> { "127.0.0.1", "192.168.1.1" };
+    
+    // Из любого IEnumerable (самый частый кейс!)
+    var uniqueIds = new HashSet<int>(largeListOfIds);
+    // или ещё короче (.NET 6+)
+    var uniqueNames = namesList.ToHashSet();
 
 ──────────────────────────────────────────────────────────────────────
 ОСНОВНЫЕ ОПЕРАЦИИ (ЭТО СПРАШИВАЮТ НА СОБЕСЕ!)
@@ -47,38 +47,38 @@ var cleanList = rawData.ToHashSet().ToList();
 ──────────────────────────────────────────────────────────────────────
 ОПЕРАЦИИ НАД МНОЖЕСТВАМИ (Set Operations) — ОЧЕНЬ ЛЮБЯТ НА СОБЕСАХ
 ──────────────────────────────────────────────────────────────────────
-setA.UnionWith(setB);              // объединение (всё вместе)
-setA.IntersectWith(setB);          // пересечение (только общее)
-setA.ExceptWith(setB);             // разность (убрать всё, что есть в B)
-setA.SymmetricExceptWith(setB);    // XOR: только в одном из наборов
-
-// Проверки
-setA.IsSubsetOf(setB);             // A полностью внутри B?
-setA.IsSupersetOf(setB);           // A содержит всё из B?
-setA.Overlaps(setB);               // есть хоть один общий элемент?
-setA.SetEquals(setB);              // множества полностью одинаковы?
-
-// Удаление по условию
-set.RemoveWhere(x => x.StartsWith("temp_"));
+    setA.UnionWith(setB);              // объединение (всё вместе)
+    setA.IntersectWith(setB);          // пересечение (только общее)
+    setA.ExceptWith(setB);             // разность (убрать всё, что есть в B)
+    setA.SymmetricExceptWith(setB);    // XOR: только в одном из наборов
+    
+    // Проверки
+    setA.IsSubsetOf(setB);             // A полностью внутри B?
+    setA.IsSupersetOf(setB);           // A содержит всё из B?
+    setA.Overlaps(setB);               // есть хоть один общий элемент?
+    setA.SetEquals(setB);              // множества полностью одинаковы?
+    
+    // Удаление по условию
+    set.RemoveWhere(x => x.StartsWith("temp_"));
 
 ──────────────────────────────────────────────────────────────────────
 КРИТИЧЕСКИ ВАЖНО: ПРАВИЛЬНЫЕ КЛЮЧИ!
 ──────────────────────────────────────────────────────────────────────
-// Плохо (по ссылке):
-class User { public string Name; }
-var set = new HashSet<User>();     // каждый new User — уникален!
-
-// Хорошо:
-class User : IEquatable<User>
-{
-    public string Name { get; set; }
-    public override bool Equals(object? obj) => obj is User u && u.Name == Name;
-    public override int GetHashCode() => Name?.GetHashCode() ?? 0;
-    public bool Equals(User? other) => other?.Name == Name;
-}
-
-// Или ещё лучше — record (автоматом всё переопределяет)
-record User(string Name);
+    // Плохо (по ссылке):
+    class User { public string Name; }
+    var set = new HashSet<User>();     // каждый new User — уникален!
+    
+    // Хорошо:
+    class User : IEquatable<User>
+    {
+        public string Name { get; set; }
+        public override bool Equals(object? obj) => obj is User u && u.Name == Name;
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+        public bool Equals(User? other) => other?.Name == Name;
+    }
+    
+    // Или ещё лучше — record (автоматом всё переопределяет)
+    record User(string Name);
 
 ──────────────────────────────────────────────────────────────────────
 ЗОЛОТЫЕ ПРАВИЛА (обязательно знать на собеседовании)
