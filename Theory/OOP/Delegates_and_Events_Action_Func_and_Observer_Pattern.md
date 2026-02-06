@@ -70,33 +70,60 @@ public class TemperatureSensor
 4. Паттерн Наблюдатель (Observer)
 
 
+       C#
+        using System;
+        
+        // 1. Класс-издатель (Источник события)
+        public class TemperatureSensor
+        {
+            // Объявляем делегат (сигнатуру метода) и само событие
+            public delegate void TemperatureHandler(double temp);
+            public event TemperatureHandler TemperatureChanged;
+
+        public void Measure(double temp)
+        {
+            Console.WriteLine($"\nСенсор замерил температуру: {temp}°C");
+        
+        // Если на событие кто-то подписан — уведомляем их
+        TemperatureChanged?.Invoke(temp);
+       }
+       }
+
+        // 2. Подписчик 1: Экран
         public class Display
         {
-            public void ShowTemperature(double temp) => Console.WriteLine($"На экране: {temp}°C");
-            {
-
-            // Подписчик 2
-            public class Alarm
-            {
+            public void ShowTemperature(double temp) => 
+                Console.WriteLine($"[Экран]: Текущее значение {temp}°C");
+        }
+        
+        // 3. Подписчик 2: Сигнализация
+        public class Alarm
+        {
             public void CheckAlert(double temp)
             {
-            if (temp > 40) Console.WriteLine("ТРЕВОГА! Перегрев!");
-            }
+                if (temp > 40) 
+                    Console.WriteLine("[ТРЕВОГА]: Обнаружен перегрев!");
             }
         }
+    
+        // Точка входа
+        class Program
+        {
+            static void Main()
+            {
+                var sensor = new TemperatureSensor();
+                var display = new Display();
+                var alarm = new Alarm();
 
-            // В Main или стартовом классе:
-            var sensor = new TemperatureSensor();
-            var display = new Display();
-            var alarm = new Alarm();
-
-            // Подписываем методы на событие
+            // ПОДПИСКА (Связываем издателя с методами подписчиков)
             sensor.TemperatureChanged += display.ShowTemperature;
             sensor.TemperatureChanged += alarm.CheckAlert;
-
-            // Работа системы
-            sensor.Measure(25.5); // Выведет только температуру
-            sensor.Measure(45.0); // Выведет температуру И тревогу
+    
+            // Эмуляция работы
+            sensor.Measure(25.5); // Отработает только Display
+            sensor.Measure(45.0); // Отработают Display и Alarm
+            }
+        }
  
 Это архитектурная цель недели. Представь систему уведомлений:
 
