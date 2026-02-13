@@ -75,6 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OOP", "OOP", "{C9E75706-DCF
 		Generics_&_Constraints.md = Generics_&_Constraints.md
 		Inheritance-&-Composition-Hierarchy-vs-Flexibility.md = Inheritance-&-Composition-Hierarchy-vs-Flexibility.md
 		Interfaces _Behavior_Contracts_and_Multiple_Implementations.md = Interfaces _Behavior_Contracts_and_Multiple_Implementations.md
+		LINQ.md = LINQ.md
 		Polymorphism_Virtual_Methods_and_Overriding.md = Polymorphism_Virtual_Methods_and_Overriding.md
 	EndProjectSection
 EndProject
