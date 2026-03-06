@@ -114,14 +114,53 @@ I. Архитектурные основы
             d => d.Key,               // Ключ второй (словаря)
             (g, d) => new { g.Name, SalePrice = g.Price * (1 - d.Value) }
         );
-4. Пагинация (Skip, Take)
+
+4. SelectMany (Сплющивание / Flattening)
+Определение: Операция, которая проецирует каждый элемент последовательности во вложенную коллекцию и объединяет все полученные подколлекции в один «плоский» поток.
+
+        var departments = new List<Department>
+        {
+            new Department { Name = "IT", Staff = new[] { "Ivan", "Oleg" } },
+            new Department { Name = "HR", Staff = new[] { "Anna", "Maria" } }
+        };
+        
+        // Плоский список всех имен: ["Ivan", "Oleg", "Anna", "Maria"]
+        var allStaffNames = departments.SelectMany(d => d.Staff);
+
+5. GroupJoin: «Один ко многим»
+Теория: Это аналог LEFT JOIN в SQL, но в мире объектов он работает интереснее. Он берет «левую» коллекцию и для каждого её элемента находит все соответствующие элементы в «правой» коллекции, отдавая их вам в виде готовой группы (набора).
+
+        var categories = new[] { "Electronics", "Food", "Books" };
+        var products = new[] 
+        { 
+            new { Name = "Phone", Cat = "Electronics" }, 
+            new { Name = "Bread", Cat = "Food" },
+            new { Name = "Laptop", Cat = "Electronics" }
+        };
+        
+        var summary = categories.GroupJoin(
+            products,
+            cat => cat,             // Ключ из категорий
+            prod => prod.Cat,       // Ключ из товаров
+            (cat, prodGroup) => new 
+            { 
+                Category = cat, 
+                Count = prodGroup.Count() // Работаем сразу с группой
+            }
+        );
+        
+        // Результат:
+        // Electronics: 2
+        // Food: 1
+        // Books: 0 (Обычный Join просто выкинул бы книги)
+6. Пагинация (Skip, Take)
 Определение: Пропуск определенного количества элементов и взятие следующей «порции».
 
         C#
         int pageSize = 10;
         int pageNumber = 3;
         var page = _allGoods.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-5. Zip (Попарное соединение)
+7. Zip (Попарное соединение)
 Определение: Склеивает два списка по индексу (первый с первым и т.д.).
 
         C#
