@@ -75,17 +75,35 @@ _context.Stocks.Find(id) — быстрый поиск в базе по перв
 
     public class StockController(ApplicationDBContext context) // Краткая запись в новых версиях C#
 
-5. Сроки жизни (Lifetimes) — без изменений
-Transient, Scoped (DbContext), Singleton.
+5. Сроки жизни (Lifetimes)
+Это правила, которые говорят серверу, когда нужно создать новый объект сервиса, а когда можно использовать старый. Это критично для управления памятью и корректной работы базы данных.
 
-Что мы добавили в общую картину:
-Теперь твой путь запроса выглядит еще детальнее:
+Transient (Временный): Создается каждый раз, когда к нему обращаются.
 
-Пользователь (URL с ID) → Маршрутизация (Attribute Routing) → Контроллер (DI берет DbContext) → Метод (LINQ ищет в БД) → Логика (Проверка на null / 404) → Ответ (JSON + Статус 200/404/500).
-    
-    builder.Services.AddTransient<IMyService, MyService>(); // Transient
-    builder.Services.AddScoped<IMyService, MyService>();    // Scoped (как DbContext)
-    builder.Services.AddSingleton<IMyService, MyService>(); // Singleton
+Суть: Как одноразовый стаканчик. Попил — выбросил. Новый запрос — новый стаканчик.
+
+Пример кода:
+
+        C#
+        builder.Services.AddTransient<IMyService, MyService>(); 
+Scoped (В рамках запроса): Создается один раз на один HTTP-запрос.
+
+Суть: Как тарелка в ресторане. Пока ты ешь (идет запрос), у тебя одна тарелка. Когда ты ушел, тарелку помыли. Другой гость (новый запрос) получит свою, чистую тарелку.
+
+Важно: DbContext всегда регистрируется как Scoped. Это гарантирует, что все действия в рамках одного клика пользователя работают с одной и той же связью с БД.
+
+Пример кода:
+
+        C#
+        builder.Services.AddScoped<IMyService, MyService>(); 
+Singleton (Одиночка): Создается один раз при старте сервера и живет вечно.
+
+Суть: Как кулер с водой в офисе. Он один для всех сотрудников на все времена.
+
+Пример кода:
+
+        C#
+        builder.Services.AddSingleton<IMyService, MyService>();
 путь запроса (Visualized):
 
         Пользователь (GET api/stock/1)
