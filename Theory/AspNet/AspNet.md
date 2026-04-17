@@ -86,3 +86,10 @@ Transient, Scoped (DbContext), Singleton.
     builder.Services.AddTransient<IMyService, MyService>(); // Transient
     builder.Services.AddScoped<IMyService, MyService>();    // Scoped (как DbContext)
     builder.Services.AddSingleton<IMyService, MyService>(); // Singleton
+путь запроса (Visualized):
+Пользователь (GET api/stock/1)
+Route("api/stock")] + [HttpGet("{id}")]
+public IActionResult GetById([FromRoute] int id)
+_context.Stocks.Find(1)
+if (stock == null) return NotFound();
+JSON { "id": 1, ... } + Status 200 OK
