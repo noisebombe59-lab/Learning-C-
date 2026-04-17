@@ -1,9 +1,22 @@
 1. Архитектура запроса и Контроллеры (Web API)
 Контроллер: Специальный класс (наследник ControllerBase), который «слушает» входящие HTTP-запросы.
 
+        [ApiController] // Атрибут-маркер (Супервизор)
+        [Route("api/stock")] // Главная дорога
+        public class StockController : ControllerBase 
+        {
+            // Код методов здесь
+        }
+
 Маршрутизация (Routing): Процесс сопоставления URL из браузера с методом в коде через атрибуты:
 
 [Route("api/stock")] — задает «главную дорогу» контроллера.
+
+    [HttpGet("{id}")] // Создает ячейку в адресе: api/stock/5
+    public IActionResult GetById([FromRoute] int id) // Вытаскивает '5' из URL в переменную 'id'
+    {
+        // ...
+    }
 
 [HttpGet("{id}")] — создает «именную ячейку» в адресе (например, /api/stock/5).
 
@@ -26,6 +39,11 @@ API не просто отдает данные, он сообщает о рез
 
 500 Internal Server Error: «Крах сервера». В коде произошло необработанное исключение (Exception). Ищи ошибку в консоли через Stack Trace.
 
+    return Ok(stock);        // 200 OK — Отдаем данные
+        return NotFound();       // 404 Not Found — Данных нет
+        // 500 генерируется автоматически, если код «упал», например:
+        // throw new Exception();
+
 3. Базы данных и Модели (EF Core) — дополнено
 DbContext в Контроллере: Мы не создаем его через new, а получаем через DI (конструктор).
 
@@ -35,10 +53,27 @@ _context.Stocks.ToList() — превращает таблицу в список
 
 _context.Stocks.Find(id) — быстрый поиск в базе по первичному ключу (ID).
 
+    // 1. Получаем контекст через конструктор (DI)
+    private readonly ApplicationDBContext _context;
+    public StockController(ApplicationDBContext context)
+    {
+        _context = context;
+    }
+    
+    // 2. Используем LINQ
+    var stocks = _context.Stocks.ToList(); // Достать всё
+    var stock = _context.Stocks.Find(id);  // Найти одного по ID
+
 4. Внедрение зависимостей (DI) — без изменений
 Суть: Проси инструменты в конструкторе.
 
 Регистрация: builder.Services.AddDbContext... в Program.cs.
+    
+    builder.Services.AddDbContext<ApplicationDBContext>(options => {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+
+    public class StockController(ApplicationDBContext context) // Краткая запись в новых версиях C#
 
 5. Сроки жизни (Lifetimes) — без изменений
 Transient, Scoped (DbContext), Singleton.
@@ -47,3 +82,7 @@ Transient, Scoped (DbContext), Singleton.
 Теперь твой путь запроса выглядит еще детальнее:
 
 Пользователь (URL с ID) → Маршрутизация (Attribute Routing) → Контроллер (DI берет DbContext) → Метод (LINQ ищет в БД) → Логика (Проверка на null / 404) → Ответ (JSON + Статус 200/404/500).
+    
+    builder.Services.AddTransient<IMyService, MyService>(); // Transient
+    builder.Services.AddScoped<IMyService, MyService>();    // Scoped (как DbContext)
+    builder.Services.AddSingleton<IMyService, MyService>(); // Singleton
