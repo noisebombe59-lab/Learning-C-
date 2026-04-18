@@ -5,9 +5,9 @@
 
 [Route]: Твоя карта дорог. Без нее сервер не поймет, какой класс вызвать.
 
-C#
-[ApiController]
-[Route("api/stock")] // Базовый путь: /api/stock
+    C#
+    [ApiController]
+    [Route("api/stock")] // Базовый путь: /api/stock
 
     public class StockController : ControllerBase 
     {
