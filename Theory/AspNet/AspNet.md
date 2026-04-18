@@ -1,178 +1,102 @@
-1. Контроллеры и Маршрутизация
-Контроллер — это мозг твоего API. Он не должен знать, как работает база данных, он просто принимает «письмо» (запрос) и отправляет «ответ».
+Блок 1: Архитектура и Управление
+1. Контроллеры и Маршрутизация (Controllers & Routing)
+Теория: Контроллер — это «регулировщик» трафика. Когда клиент отправляет запрос, ASP.NET ищет класс с атрибутом [Route], имя которого совпадает с URL.
 
-[ApiController]: Твой автоматический контролер. Он избавляет тебя от написания if (!ModelState.IsValid) вручную.
+[ApiController]: Это не просто декорация. Он заставляет контроллер работать в режиме API: автоматически возвращает 400 ошибку, если данные кривые, и сам решает, откуда брать данные (из JSON или URL).
 
-[Route]: Твоя карта дорог. Без нее сервер не поймет, какой класс вызвать.
+ControllerBase: Мы используем его, потому что в API нам не нужны функции для отрисовки HTML-страниц (Views), которые есть в обычном Controller.
 
     C#
     [ApiController]
-    [Route("api/stock")] // Базовый путь: /api/stock
-
+    [Route("api/stock")] // Все запросы к акциям пойдут через этот "адрес"
     public class StockController : ControllerBase 
     {
-        // [HttpGet] без параметров вызовет этот метод при GET /api/stock
-        [HttpGet]
-        public IActionResult GetAll() 
+        [HttpGet("{id}")] // Фигурные скобки означают переменную. Сюда можно подставить любое число.
+        public IActionResult GetById([FromRoute] int id) 
         {
-            return Ok("Список всех акций"); // Статус 200
+            // Метод Ok() упаковывает строку в JSON и ставит статус 200
+            return Ok($"Вы получили данные по акции номер {id}"); 
         }
-
-    // [HttpGet("{id}")] вызовет метод при GET /api/stock/5
-    [HttpGet("{id}")]
-    public IActionResult GetById([FromRoute] int id) 
-    {
-        return Ok($"Вы запросили акцию с ID: {id}");
     }
-    }
-2. Сроки жизни объектов (Lifetimes) в DI
-Это то, как долго живет «инструмент», который ты попросил в конструкторе.
+2. Сроки жизни объектов (Dependency Injection Lifetimes)
+Теория: DI — это система поставки инструментов. Когда контроллеру нужна база данных, он не создает её сам, а просит систему: «Дай мне контекст базы». Сроки жизни определяют, как долго этот инструмент будет находиться в руках у контроллера.
 
-Transient: Как одноразовая салфетка. Нужна — взял, использовал — выбросил. (Всегда новый экземпляр).
+Transient: Система создает новый объект каждый раз, когда он запрашивается. Это как одноразовый шприц.
 
-Scoped: Как поднос в столовой. Он у тебя один, пока ты не доешь (пока не закончится один HTTP-запрос). Стандарт для DbContext.
+Scoped: Объект создается один раз на весь цикл жизни одного HTTP-запроса. Это важно для базы данных: все операции в рамках одного клика пользователя должны идти через один и тот же канал связи с БД.
 
-Singleton: Как кулер в офисе. Он один для всех сотрудников и стоит там годами. (Один на всё время работы приложения).
+Singleton: Объект создается один раз при старте сервера и живет до его выключения. Все пользователи используют один и тот же экземпляр.
 
     C#
     // Регистрация в Program.cs
-
-    builder.Services.AddTransient<IGenerator, GuidGenerator>();
-    builder.Services.AddScoped<IStockRepository, StockRepository>();
-    builder.Services.AddSingleton<ICacheService, CacheService>();
-3. Базы данных и EF Core в Контроллере
-Мы не создаем подключение к базе вручную через new. Мы просим DbContext у системы (через конструктор) и используем LINQ для общения с таблицами.
-
-_context.Stocks.ToList(): «Достать всех из таблицы Stocks».
-
-_context.Stocks.Find(id): «Найти одного счастливчика по ключу».
-
-    C#
-    public class StockController : ControllerBase 
-    {
-        private readonly ApplicationDBContext _context;
-        public StockController(ApplicationDBContext context) => _context = context;
-
-    [HttpGet]
-    public IActionResult GetTopStocks() 
-    {
-        var stocks = _context.Stocks.Where(s => s.Price > 100).ToList();
-        return Ok(stocks);
-    }
-    }
+    builder.Services.AddTransient<IMyService, MyService>(); // Всегда новый
+    builder.Services.AddScoped<ApplicationDBContext>();     // Один на один запрос
+    builder.Services.AddSingleton<IGlobalCache, GlobalCache>(); // Один на всех
 Блок 2: Данные и Безопасность
-4. DTO (Data Transfer Object) и Маппинг
-Это «защитный костюм» для твоих данных. Ты никогда не отдаешь саму таблицу из базы наружу (чтобы не светить пароли или системные поля).
+3. DTO (Data Transfer Object) и Маппинг
+Теория: В профессиональной разработке никогда не отдают модели базы данных наружу.
 
-Маппер: Простой метод, который перекладывает данные из Модели в DTO.
+Безопасность: В модели Stock могут быть поля, которые не должен видеть клиент (например, внутренние пометки или связанные данные других юзеров).
 
-Over-posting: Ситуация, когда клиент присылает лишние поля (например, IsAdmin). DTO предотвращает это, так как содержит только разрешенные поля.
+Гибкость: Если ты решишь изменить название колонки в базе, тебе не придется переписывать фронтенд — ты просто изменишь маппинг в DTO.
+
+Маппер: Это «переводчик», который перекладывает данные из сложной структуры базы в простую «посылку» для клиента.
 
     C#
-    // Модель БД (Stock.cs)
-    public class Stock { public int Id { get; set; } public string SecretCode { get; set; } }
+    // Модель (как лежит в БД)
+    public class Stock { public int Id { get; set; } public string InternalComment { get; set; } }
     
-    // DTO для пользователя (StockDto.cs)
+    // DTO (что видит клиент)
     public class StockDto { public int Id { get; set; } }
     
-    // Метод маппинга
-    public static class StockExtensions {
-        public static StockDto ToDto(this Stock stock) => new StockDto { Id = stock.Id };
+    // Маппинг (процесс перекладывания)
+    public static StockDto ToDto(this Stock stock) 
+    {
+        return new StockDto { Id = stock.Id }; // Поле InternalComment "отрезано"
     }
+4. Over-posting (Массовое назначение)
+Теория: Это дыра в безопасности. Если твой метод принимает модель базы данных напрямую, злоумышленник может добавить в JSON поле "Id": 100 или "Balance": 99999, и если ты просто сохранишь этот объект, база данных примет эти поддельные значения.
+Решение: Мы используем специальные Request DTO, где есть только те поля, которые пользователю разрешено заполнять.
 
-    // Применение:
-    var stock = _context.Stocks.Find(1);
-return Ok(stock.ToDto()); // Скрыли SecretCode
-5. IActionResult и Статус-коды
-Это способ сказать клиенту: «Всё прошло хорошо» или «У нас проблемы».
+Блок 3: Продвинутые механизмы
+5. Middleware (Конвейер обработки)
+Теория: Представь запрос как деталь на заводе. Она едет по ленте (Pipeline) через разные станки (Middleware).
 
-    2xx (Success): 200 OK, 201 Created (успех в POST), 204 No Content (успех в Delete).
-    
-    4xx (Client Error): 400 Bad Request (кривые данные), 404 Not Found (не нашел).
-    
-    5xx (Server Error): 500 Internal Server Error (твой код упал).
+Станция логирования записывает: «Пришел запрос».
 
-Блок 3: Продвинутые термины и Middleware
-6. Middleware (Конвейер)
-Последовательность обработчиков, через которые проходит запрос.
+Станция авторизации проверяет: «Кто это?».
 
-Конвейер: Запрос идет сверху вниз по Program.cs. Если авторизация не прошла, запрос прерывается (Short-circuiting).
+Станция маршрутизации решает: «В какой контроллер отправить деталь?».
+Если деталь не прошла проверку на «Станции авторизации», она выбрасывается с ленты (ответ 401), и до контроллера даже не доезжает.
 
     C#
-    app.UseExceptionHandler("/error"); // 1. Ловим ошибки
-    app.UseRouting();                // 2. Ищем маршрут
-    app.UseAuthorization();          // 3. Проверяем права
-    app.MapControllers();           // 4. Запускаем код контроллера
-7. Глоссарий (Коротко)
-Model Binding: Автоматическое заполнение параметров (например, int id) из URL или JSON.
+    app.UseRouting();          // Сначала определяем путь
+    app.UseAuthorization();    // Потом проверяем права
+    app.MapControllers();      // В самом конце отдаем запрос в контроллер
+6. Model Binding и ModelState
+Теория: * Binding: Это процесс превращения сырого текста из JSON или URL в объекты C#. ASP.NET сам парсит строки и пытается «засунуть» их в переменные.
 
-ModelState: Словарь ошибок валидации. (Если юзер прислал текст в поле для цифр — ошибка будет здесь).
+ModelState: Если привязчик не смог превратить текст "привет" в число int, он не ломает программу, а записывает ошибку в словарь ModelState. Атрибут [ApiController] видит эту запись и автоматически отправляет клиенту статус 400.
 
-Stack Trace: Отчет о цепочке вызовов при ошибке. Указывает конкретный файл и строку, где всё сломалось.
+7. Метод CreatedAtAction
+Теория: По правилам REST API, после создания ресурса сервер должен ответить не просто «ОК», а «201 Created».
 
-Блок 4: Практика POST (Создание данных) — Видео №6
-1. Схема работы (Data Flow)
-JSON (Client) → Request DTO → Entity (Model) → Database → Response DTO (Client).
+Location Header: Сервер обязан сказать клиенту: «Я создал это, теперь оно живет по такому-то адресу».
 
-2. Реализация CreateStockRequestDto
-Создаем DTO без ID, так как ID генерирует база данных.
+CreatedAtAction: Этот метод сам находит нужный маршрут (например, GetById), подставляет туда ID новой записи и формирует ссылку для клиента.
 
-        C#
-        public class CreateStockRequestDto
-        {
-            public string Symbol { get; set; } = string.Empty;
-            public string CompanyName { get; set; } = string.Empty;
-            public decimal Purchase { get; set; }
-            public decimal LastDiv { get; set; }
-            public string Industry { get; set; } = string.Empty;
-            public long MarketCap { get; set; }
-        }
-3. Маппинг «наоборот» (DTO -> Модель)
-В StockMappers.cs добавляем метод превращения DTO в Модель для сохранения в базу.
-
-        C#
-        public static Stock ToStockFromCreateDto(this CreateStockRequestDto stockDto)
-        {
-            return new Stock
-            {
-                Symbol = stockDto.Symbol,
-                CompanyName = stockDto.CompanyName,
-                Purchase = stockDto.Purchase,
-                LastDiv = stockDto.LastDiv,
-                Industry = stockDto.Industry,
-                MarketCap = stockDto.MarketCap
-            };
-        }
-4. Метод Create в Контроллере
-Главное: [FromBody] и CreatedAtAction.
-
-        C#
-        [HttpPost]
-        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
-        {
-            // 1. Превращаем DTO в Модель
-            var stockModel = stockDto.ToStockFromCreateDto();
-        
-            // 2. Добавляем в контекст (начало отслеживания)
-            _context.Stocks.Add(stockModel);
-        
-            // 3. Сохраняем (SQL INSERT). После этого у stockModel появится реальный Id
-            _context.SaveChanges();
-        
-            // 4. Возвращаем 201 Created + ссылку на новый объект + сам объект
-            return CreatedAtAction(
-                nameof(GetById), 
-                new { id = stockModel.Id }, 
-                stockModel.ToStockDto()
-            );
-        }
-5. Разбор CreatedAtAction
-Эта строчка делает магию:
-
-nameof(GetById): Ссылается на твой метод получения.
-
-new { id = stockModel.Id }: Подставляет ID созданной акции в маршрут.
-
-stockModel.ToStockDto(): Показывает пользователю результат.
-
-Результат: В заголовках ответа (Headers) появится ссылка Location на новую акцию.
+    C#
+    [HttpPost]
+    public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
+    {
+        var stockModel = stockDto.ToStockFromCreateDto(); // 1. Из DTO в Модель
+        _context.Stocks.Add(stockModel);                  // 2. Кладем в список на сохранение
+        _context.SaveChanges();                           // 3. Выполняем SQL INSERT
+    
+        // 4. Возвращаем 201 статус, ссылку на новую запись и саму запись
+        return CreatedAtAction(
+            nameof(GetById),               // Имя метода для просмотра
+            new { id = stockModel.Id },    // Параметр (ID подхватится из БД после SaveChanges)
+            stockModel.ToStockDto()        // Тело ответа
+        );
+    }
