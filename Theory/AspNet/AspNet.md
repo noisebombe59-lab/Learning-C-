@@ -158,16 +158,6 @@ SQL
         {
             return Ok($"ID: {id}, Name: {name}");
         }
-ModelState
-Объект, хранящий информацию о том, соответствуют ли пришедшие данные правилам (атрибутам), установленным в DTO.
-
-    C#
-    public class CreateStockDto {
-        [Required] // Поле не может быть null
-        [MinLength(3)] // Минимум 3 символа
-        public string Symbol { get; set; }
-    }
-
 [HttpPost]
     
     public IActionResult Create([FromBody] CreateStockDto dto) {
@@ -195,12 +185,3 @@ Stack Trace
     // System.NullReferenceException: Object reference not set to an instance of an object.
     //   at MyApp.Controllers.StockController.Delete(Int32 id) in C:\Project\Controllers\StockController.cs:line 45
     //   ^--- Это и есть Stack Trace (указывает на 45 строку)
-HttpContext
-Объект, инкапсулирующий всю информацию об отдельном HTTP-запросе и ответе (заголовки, куки, данные пользователя, метод GET/POST).
-    
-    C#
-    [HttpGet]
-    public IActionResult GetInfo() {
-        var userAgent = Request.Headers["User-Agent"]; // Доступ к данным через HttpContext (Request)
-        return Ok(userAgent);
-    }
