@@ -1,14 +1,14 @@
-    200 OK (GET/PUT) — данные успешно переданы или обновлены. return Ok(data);
+200 OK (GET/PUT) — данные успешно переданы или обновлены. return Ok(data);
     
-    201 Created (POST) — объект создан, в ответе есть ссылка на него. return CreatedAtAction(...);
+201 Created (POST) — объект создан, в ответе есть ссылка на него. return CreatedAtAction(...);
     
-    204 No Content (DELETE) — удаление прошло успешно, показывать нечего. return NoContent();
+204 No Content (DELETE) — удаление прошло успешно, показывать нечего. return NoContent();
     
-    400 Bad Request — клиент прислал некорректные данные. return BadRequest();
+400 Bad Request — клиент прислал некорректные данные. return BadRequest();
     
-    404 Not Found — объект с таким ID в базе не обнаружен. return NotFound();
+404 Not Found — объект с таким ID в базе не обнаружен. return NotFound();
     
-    500 Internal Server Error — на сервере произошла непредвиденная ошибка (баг).
+500 Internal Server Error — на сервере произошла непредвиденная ошибка (баг).
 
     1. API (Интерфейс)
 Что это: «Стойка регистрации» твоего приложения. Фронтенд не лезет в твой код, он просто стучится в API.
