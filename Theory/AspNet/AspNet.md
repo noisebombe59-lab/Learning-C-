@@ -285,3 +285,88 @@ Async all the way: Если метод асинхронный, то и всё п
 ToListAsync / FirstOrDefaultAsync: В Entity Framework для асинхронности используем специальные методы с суффиксом Async.
 
 Не для всего: Для обычных вычислений в памяти (сложить числа, отсортировать список) асинхронность не нужна, она только добавит лишних затрат.
+
+      15. Паттерн Репозиторий и Dependency Injection (DI)
+Глобальная концепция: Это переход от монолитного кода к многослойной архитектуре. Мы разделяем ответственность: один компонент управляет сетевыми запросами, другой — данными.
+
+    Три кита архитектуры
+1. Интерфейс (Абстракция / Contract)
+Это набор правил. Он описывает, что система должна уметь делать, не вдаваясь в подробности «как».
+
+Зачем: Чтобы вызывающий код не зависел от конкретной реализации (базы данных, API или файлов).
+
+Пример (Общий вид):
+
+    C#
+    public interface IDataRepository
+    {
+        // Описываем только "сигнатуру" (название и что возвращает)
+        Task<IEnumerable<Entity>> GetAllAsync();
+        Task<Entity?> GetByIdAsync(int id);
+    }
+2. Репозиторий (Реализация / Implementation)
+Это конкретный класс, который выполняет работу, описанную в интерфейсе. Только он знает о существовании базы данных или ORM.
+
+Изоляция: Если завтра база данных изменится, мы перепишем только этот класс. Остальная часть приложения об этом даже не узнает.
+
+Пример (Общий вид):
+
+    C#
+    public class SQLRepository : IDataRepository
+    {
+        private readonly MyDbContext _context;
+
+    public SQLRepository(MyDbContext context) => _context = context;
+
+    public async Task<IEnumerable<Entity>> GetAllAsync() 
+    {
+        return await _context.Entities.ToListAsync(); // Реальный SQL запрос тут
+    }
+
+    public async Task<Entity?> GetByIdAsync(int id) 
+    {
+        return await _context.Entities.FindAsync(id);
+    }
+    }
+3. Dependency Injection (Внедрение зависимостей / DI)
+Механизм, который «склеивает» абстракции с их реализациями. Класс не создает объект сам через new, а получает его «извне» через конструктор.
+
+Пример регистрации (в Program.cs):
+
+    C#
+    // "Когда кто-то попросит IDataRepository, создай и дай ему SQLRepository"
+    builder.Services.AddScoped<IDataRepository, SQLRepository>();
+    Пример получения (в Контроллере):
+    
+    C#
+    public class MyController : ControllerBase
+    {
+        private readonly IDataRepository _repository;
+
+    // Контроллер просит интерфейс, а DI-контейнер подсовывает реализацию
+    public MyController(IDataRepository repository)
+    {
+        _repository = repository;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get() 
+    {
+        return Ok(await _repository.GetAllAsync());
+    }
+    }
+    Иерархия взаимодействия (N-Tier)
+Уровень представления (Controllers): Принимает данные и вызывает методы интерфейса. Не видит базу данных.
+
+Слой абстракции (Interfaces): Мост между уровнями.
+
+Уровень доступа к данным (Repositories): Получает команду, идет в БД и возвращает результат.
+
+    Главные преимущества
+Тестируемость: Можно подменить реальный репозиторий «фейковым» для тестов.
+
+Слабая связанность (Loose Coupling): Компоненты независимы. Меняешь одну часть — не ломаешь остальные.
+
+Принцип единственной ответственности (Single Responsibility): Каждый класс занимается своим делом.
+
+Ключевой вывод: Репозиторий и DI превращают код в конструктор LEGO. Ты собираешь приложение из независимых блоков, которые легко заменять и расширять.
