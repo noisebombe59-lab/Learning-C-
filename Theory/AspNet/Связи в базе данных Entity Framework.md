@@ -12,6 +12,35 @@ int StockId (Required) → Акция удалена = Комментарии у
 
 int? StockId (Optional) → Акция удалена = Комментарии остались, но связь стерта (NULL).
 
+    public class Stock 
+    {
+        public int Id { get; set; } // Primary Key
+        public string Symbol { get; set; } = string.Empty;
+    
+        // Навигационное свойство "к детям" (Коллекция)
+        public List<Comment> Comments { get; set; } = new(); 
+    }
+    
+    public class Comment 
+    {
+        public int Id { get; set; } // Primary Key
+        public string Content { get; set; } = string.Empty;
+
+    // --- ВАРИАНТ А: ОБЯЗАТЕЛЬНАЯ СВЯЗЬ (Required) ---
+    // public int StockId { get; set; } 
+    // Результат в БД: NOT NULL. 
+    // Удаление акции => Удаление всех комментариев (Cascade Delete).
+
+    // --- ВАРИАНТ Б: МЯГКАЯ СВЯЗЬ (Optional/Nullable) ---
+    public int? StockId { get; set; } 
+    // Результат в БД: NULL allowed.
+    // Удаление акции => StockId у комментариев станет NULL (они выживут).
+
+    // Навигационное свойство "к родителю" (Объект)
+    // Позволяет писать: var name = comment.Stock.Symbol;
+    public Stock? Stock { get; set; } 
+    }
+
 3. Жадная загрузка (Include) и Циклы в JSON
 EF Core по умолчанию «ленивый» и не подгружает связанные данные. Метод .Include() заставляет его сделать JOIN в SQL.
 
