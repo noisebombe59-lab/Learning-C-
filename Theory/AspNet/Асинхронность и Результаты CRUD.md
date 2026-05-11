@@ -1,4 +1,4 @@
-﻿8. Async / Await
+﻿1. Async / Await
 Сделано, чтобы сервер не «зависал», пока база данных (медленная «черепаха») ищет данные.
 
 Task: Обещание результата.
@@ -26,14 +26,14 @@ NotFound() — 404 Not Found. «Я искал в базе, но по этому 
 💥 Ошибки сервера (5xx)
 Problem() — 500 Internal Server Error. «Упс, у меня в коде что-то упало (ошибка в логике или БД)».
 
-[HttpPost]
-public async Task<IActionResult> Create([FromBody] CreateStockDto dto) 
-{
-    var model = dto.ToModel();
-    await _context.Stocks.AddAsync(model);
-    await _context.SaveChangesAsync();
-    
-    // Возвращаем 201 статус и путь к новому объекту
-    return CreatedAtAction(nameof(GetById), new { id = model.Id }, model.ToStockDto());
-}
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateStockDto dto) 
+    {
+        var model = dto.ToModel();
+        await _context.Stocks.AddAsync(model);
+        await _context.SaveChangesAsync();
+        
+        // Возвращаем 201 статус и путь к новому объекту
+        return CreatedAtAction(nameof(GetById), new { id = model.Id }, model.ToStockDto());
+    }
 Суть: Ты возвращаешь не просто «объект или пустоту», а конкретный статус-код, чтобы фронтенд точно знал, выводить данные или показывать ошибку.
