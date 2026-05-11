@@ -219,6 +219,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASP_NET_Core_Web_API_and_Architecture", "ASP_NET_Core_Web_API_and_Architecture", "{67C2B3C8-5415-4BBA-B029-A7A97338B3F5}"
 	ProjectSection(SolutionItems) = preProject
 		Asp.Net = Asp.Net
+		Database-Architecture-(Relationships and Keys).md = Database-Architecture-(Relationships and Keys).md
+		DTO and Object Cycle Solution.md = DTO and Object Cycle Solution.md
+		EF CoreData Loading and JOINs.md = EF CoreData Loading and JOINs.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Asynchrony Async", "Asynchrony Async", "{4798B200-648F-4ECC-9152-B34119D67951}"
+	ProjectSection(SolutionItems) = preProject
+		Asynchrony Async-Await.md = Asynchrony Async-Await.md
 	EndProjectSection
 EndProject
 Global
@@ -560,6 +568,7 @@ Global
 		{B83B4900-1706-40F5-963A-28E75939C20A} = {75560A9C-959B-44D3-B2D4-C935FB2E4A5E}
 		{98FB2913-5217-4FCE-A797-72AEE5F4FD42} = {75560A9C-959B-44D3-B2D4-C935FB2E4A5E}
 		{67C2B3C8-5415-4BBA-B029-A7A97338B3F5} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{4798B200-648F-4ECC-9152-B34119D67951} = {67C2B3C8-5415-4BBA-B029-A7A97338B3F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {31849BEF-8D07-42DC-9FBF-6CBF14C8027B}
