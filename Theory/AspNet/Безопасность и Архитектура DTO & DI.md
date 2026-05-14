@@ -25,3 +25,63 @@ Transient: Новый объект на каждый «чих».
 Scoped: Один объект на один HTTP-запрос (идеально для БД).
 
 Singleton: Один на всё время работы сервера.
+
+C#
+public interface ITransientService { int GetNumber(); }
+public class TransientService : ITransientService 
+{
+    private static int _globalCounter = 0;
+    private readonly int _number;
+
+    public TransientService()
+    {
+        _globalCounter++; // Увеличиваем общий счетчик
+        _number = _globalCounter; // Запоминаем номер этого конкретного объекта
+    }
+    public int GetNumber() => _number;
+}
+
+// Точно такие же классы делаем для Scoped и Singleton...
+// (Они отличаются только названиями, чтобы DI-контейнер их различал)
+Шаг 2: Тестируем в Контроллере
+Мы точно так же просим в конструкторе по две штуки каждого сервиса:
+
+        C#
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(new
+            {
+                // Просим номера у двух Transient сервисов
+                Transient1 = _transient1.GetNumber(),
+                Transient2 = _transient2.GetNumber(),
+        
+                // Просим у двух Scoped
+                Scoped1 = _scoped1.GetNumber(),
+                Scoped2 = _scoped2.GetNumber(),
+        
+                // Просим у двух Singleton
+                Singleton1 = _singleton1.GetNumber(),
+                Singleton2 = _singleton2.GetNumber()
+            });
+        }
+А теперь смотрим на цифры в ответе:
+Вызываем эндпоинт в САМЫЙ ПЕРВЫЙ РАЗ (Запрос №1):
+Transient1 = 1, Transient2 = 2.
+(Почему? Родился первый объект, счетчик стал 1. Тут же для второго параметра родился второй объект — счетчик стал 2).
+
+Scoped1 = 3, Scoped2 = 3.
+(Почему? Для этого HTTP-запроса создался ОДИН объект. И первому, и второму параметру выдали его. Счетчик стал 3).
+
+Singleton1 = 4, Singleton2 = 4.
+(Почему? Создался один объект на всё время работы сервера. Счетчик стал 4).
+
+Нажимаем обновить страницу (Запрос №2):
+Transient1 = 5, Transient2 = 6.
+(Прошлые умерли, родились два абсолютно новых).
+
+Scoped1 = 7, Scoped2 = 7.
+(Для нового HTTP-запроса родился один новый объект с номером 7).
+
+Singleton1 = 4, Singleton2 = 4.
+(А вот он НЕ ПЕРЕСОЗДАЛСЯ. Он остался жив с прошлого запроса, его номер по-прежнему 4).
