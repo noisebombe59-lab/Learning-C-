@@ -26,20 +26,20 @@ Scoped: Один объект на один HTTP-запрос (идеально 
 
 Singleton: Один на всё время работы сервера.
 
-C#
-public interface ITransientService { int GetNumber(); }
-public class TransientService : ITransientService 
-{
-    private static int _globalCounter = 0;
-    private readonly int _number;
-
-    public TransientService()
-    {
-        _globalCounter++; // Увеличиваем общий счетчик
-        _number = _globalCounter; // Запоминаем номер этого конкретного объекта
-    }
-    public int GetNumber() => _number;
-}
+        C#
+        public interface ITransientService { int GetNumber(); }
+        public class TransientService : ITransientService 
+        {
+            private static int _globalCounter = 0;
+            private readonly int _number;
+        
+            public TransientService()
+            {
+                _globalCounter++; // Увеличиваем общий счетчик
+                _number = _globalCounter; // Запоминаем номер этого конкретного объекта
+            }
+            public int GetNumber() => _number;
+        }
 
 // Точно такие же классы делаем для Scoped и Singleton...
 // (Они отличаются только названиями, чтобы DI-контейнер их различал)
