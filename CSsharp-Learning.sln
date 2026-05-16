@@ -220,6 +220,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASP_NET_Core_Web_API_and_Ar
 	ProjectSection(SolutionItems) = preProject
 		Асинхронность и Результаты CRUD.md = Асинхронность и Результаты CRUD.md
 		Безопасность и Архитектура DTO & DI.md = Безопасность и Архитектура DTO & DI.md
+		Валидация данных.md = Валидация данных.md
 		Основы API и Маршрутизация.md = Основы API и Маршрутизация.md
 		Паттерн Репозиторий.md = Паттерн Репозиторий.md
 		Связи в базе данных Entity Framework.md = Связи в базе данных Entity Framework.md
