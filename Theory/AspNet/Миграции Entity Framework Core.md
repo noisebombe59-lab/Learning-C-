@@ -1,11 +1,11 @@
-﻿1. Что такое Миграция
+    ﻿1. Что такое Миграция
 Суть: Это «чертеж» изменений. Когда ты меняешь свои C#-классы (модели), миграция описывает, как перенести эти изменения в реальные таблицы SQL Server.
 
 Зачем нужно: Избавляет от необходимости вручную править базу через SQL-скрипты. База данных автоматически синхронизируется и всегда соответствует твоему C#-коду у всей команды разработчиков.
 
 Важный нюанс: Миграция — это не сама база данных, это лишь сгенерированная инструкция на языке C#, говорящая базе: «Добавь колонку» или «Удали таблицу».
 
-2. Три главные команды (Инструментарий PMC)
+    2. Три главные команды (Инструментарий PMC)
 Работа с миграциями происходит в Visual Studio через Package Manager Console:
 
 Add-Migration [ИмяМиграции] — Создать чертеж. EF Core сравнивает твои текущие модели с последним снимком состояния проекта и генерирует файл миграции.
@@ -14,30 +14,32 @@ Update-Database — Применить чертеж. EF Core идет в SQL Ser
 
 Remove-Migration — Сжечь чертеж. Удаляет последнюю созданную миграцию. Работает строго до того, как ты успел применить её через Update-Database.
 
-3. Анатомия файла миграции (Up и Down)
+    3. Анатомия файла миграции (Up и Down)
 Каждая миграция состоит из двух методов. Это логика вида «Шаг вперед» и «Шаг назад».
 
 Метод Up: Инструкции по накату обновлений (например: CreateTable, AddColumn).
 
 Метод Down: Инструкции по полному откату назад, если обновление сломало систему (например: DropTable, DropColumn).
 
-C#
-// Пример: Добавление поля "Description" в модель Stock
-protected override void Up(MigrationBuilder migrationBuilder)
-{
-    migrationBuilder.AddColumn<string>(
-        name: "Description",
-        table: "Stocks",
-        nullable: true);
-}
+    C#
+    // Пример: Добавление поля "Description" в модель Stock
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.AddColumn<string>(
+            name: "Description",
+            table: "Stocks",
+            nullable: true);
+    }
 
-protected override void Down(MigrationBuilder migrationBuilder)
-{
-    migrationBuilder.DropColumn(
-        name: "Description",
-        table: "Stocks");
-}
-4. Model Snapshot (Снимок состояния)
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            name: "Description",
+            table: "Stocks");
+    }
+.
+
+    4. Model Snapshot (Снимок состояния)
 В папке Migrations твоего проекта всегда лежит файл ...ModelSnapshot.cs.
 
 Суть: Это финальный, суммарный чертеж всей твоей базы данных в одном файле.
@@ -46,12 +48,12 @@ protected override void Down(MigrationBuilder migrationBuilder)
 
 ⚠️ Важно: Никогда не удаляй и не редактируй этот файл вручную! Это внутренняя память системы миграций.
 
-5. Таблица истории (__EFMigrationsHistory)
+    5. Таблица истории (__EFMigrationsHistory)
 Суть: Служебная системная таблица, которую EF Core автоматически создает внутри твоей базы данных SQL.
 
 Зачем нужна: Там хранится список имен всех миграций, которые уже были реально применены на этой БД. Когда ты запускаешь команду Update-Database, система сверяется с этой таблицей и накатывает только те новые миграции, которых в этой таблице ещё нет.
 
-6. Ловушка потери данных при переименовании полей
+    6. Ловушка потери данных при переименовании полей
 Это самый опасный архитектурный момент при работе с EF Core. Если ты просто переименуешь свойство в C# классе (например, Title переименуешь в Name), EF Core по умолчанию решит, что ты удалил колонку Title (со всеми боевыми данными пользователей!) и создал абсолютно новую пустую колонку Name.
 
 Как делать правильно и безопасно:
@@ -63,6 +65,6 @@ protected override void Down(MigrationBuilder migrationBuilder)
 
 Вместо них вручную напиши одну безопасную команду:
 
-C#
-migrationBuilder.RenameColumn(name: "Title", table: "Stocks", newName: "Name");
+    C#
+    migrationBuilder.RenameColumn(name: "Title", table: "Stocks", newName: "Name");
 Это заставит SQL Server просто переименовать существующую колонку, сохранив внутри неё все имеющиеся данные.
