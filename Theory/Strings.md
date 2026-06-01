@@ -25,18 +25,24 @@ Remove("value") — $O(1)$: Находит элемент по хешу и уд�
 Фильтрация дубликатов
 
 // Быстрое удаление дубликатов из огромного списка за O(n)
+
 List<string> rawData = new List<string> { "apple", "banana", "apple" };
-HashSet<string> unique = rawData.ToHashSet(); 
+
+HashSet<string> unique = rawData.ToHashSet();
 
 // Если на выходе снова нужен список:
+
 List<string> cleanList = rawData.ToHashSet().ToList();
 
 
 Операции над множествами
 
 setA.UnionWith(setB);           // Объединение: в setA останутся все элементы из A и B
+
 setA.IntersectWith(setB);       // Пересечение: в setA останутся только ОБЩИЕ элементы
+
 setA.ExceptWith(setB);          // Разность: из setA удалится всё, что есть в setB
+
 setA.SymmetricExceptWith(setB); // XOR: в setA останутся элементы, которые есть только в A или только в B
 
 bool isSubset = setA.IsSubsetOf(setB); // true, если множество A полностью находится внутри B
@@ -47,19 +53,28 @@ bool isSubset = setA.IsSubsetOf(setB); // true, если множество A п
 По умолчанию для ссылочных типов (class) HashSet сравнивает ссылки на объекты (адреса в памяти), а не их внутреннее содержимое.
 
 // ПЛОХО: Объекты уникальны по ссылке, HashSet добавит оба, несмотря на одинаковые данные
-class User 
-{ 
-    public string Name { get; set; } 
+
+class User
+
+{
+
+public string Name { get; set; }
+
 }
 
 var badSet = new HashSet<User>();
+
 badSet.Add(new User { Name = "Илья" });
+
 badSet.Add(new User { Name = "Илья" }); // Добавится второй раз!
 
 // ОТЛИЧНО: record автоматически переопределяет сравнение по значениям свойств
+
 record UserRecord(string Name);
 
 var goodSet = new HashSet<UserRecord>();
+
 goodSet.Add(new UserRecord("Илья"));
+
 goodSet.Add(new UserRecord("Илья")); // HashSet проигнорирует дубликат, вернет false
 
