@@ -31,3 +31,37 @@ for (int i = 0; i < 100_000; i++) list.Add(i);
 //  ОТЛИЧНО: Задаем Capacity сразу, выделяя один массив в памяти под нужный объем данных
 var optimizedList = new List<int>(capacity: 100_000);
 for (int i = 0; i < 100_000; i++) optimizedList.Add(i);
+
+```
+
+### 🔗 Правила удаления элементов в цикле
+
+> **Критическая ошибка:** Попытка изменить состав коллекции (удалить или добавить элемент) напрямую внутри цикла `foreach` приведет к падению программы с исключением `System.InvalidOperationException` («Collection was modified; enumeration operation may not execute»).
+
+* **Пример ошибочного кода:**
+```csharp
+foreach (var item in fruits)
+{
+    if (item == "banana") fruits.Remove(item); // ОШИБКА! Блок кода закроется ниже
+}
+
+```
+Безопасные и правильные подходы
+Использование специализированного метода (Рекомендуется):
+
+```csharp
+C#
+// Быстро, безопасно и эффективно под капотом (сдвиг элементов за один проход)
+fruits.RemoveAll(f => f == "banana");
+```
+Обход коллекции с конца через цикл for:
+
+C#
+// Безопасно, так как сдвиг элементов не нарушает индексы еще не проверенных элементов
+for (int i = fruits.Count - 1; i >= 0; i--)
+{
+    if (fruits[i] == "banana")
+    {
+        fruits.RemoveAt(i);
+    }
+}
