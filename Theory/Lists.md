@@ -32,7 +32,9 @@ for (int i = 0; i < 100_000; i++) list.Add(i);
 var optimizedList = new List<int>(capacity: 100_000);
 for (int i = 0; i < 100_000; i++) optimizedList.Add(i);
 
-⚠️ Правила модификации и удаления элементов
+---
+
+##⚠️ Правила модификации и удаления элементов
 Критическая ошибка
 Попытка изменить состав коллекции (удалить или добавить элемент) внутри цикла foreach приведет к генерации исключения System.InvalidOperationException («Collection was modified; enumeration operation may not execute»). Это связано с тем, что Enumerator отслеживает состояние внутренней версии коллекции.
 
