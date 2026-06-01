@@ -62,3 +62,4 @@ record UserRecord(string Name);
 var goodSet = new HashSet<UserRecord>();
 goodSet.Add(new UserRecord("Илья"));
 goodSet.Add(new UserRecord("Илья")); // HashSet проигнорирует дубликат, вернет false
+
