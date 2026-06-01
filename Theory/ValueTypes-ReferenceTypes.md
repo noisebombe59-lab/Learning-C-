@@ -56,7 +56,8 @@ Reference Types (Ссылочные типы)
     Console.WriteLine(user1.Name); // Выведет "Антон" (объект-то один и тот же)
     Console.WriteLine(user2.Name); // Выведет "Антон"
 ──────────────────────────────────────────────────────────────────────
-Nullability (C# 8+) — обязательно включай в проекте!
+
+    Nullability (C# 8+) — обязательно включай в проекте!
 
     Nullable value types
     int? nullableInt = null;   // можно null
@@ -66,7 +67,8 @@ Nullability (C# 8+) — обязательно включай в проекте!
     string? maybeNull = null;     // явно допускает null
     string notNull = "text";      // компилятор предупредит, если присвоить null
 ──────────────────────────────────────────────────────────────────────
-Полезные операторы для null
+    
+    Полезные операторы для null
 
     user?.Profile?.Orders?.Count           // ?. — безопасный доступ (null-conditional)
     
