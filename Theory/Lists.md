@@ -31,6 +31,7 @@ for (int i = 0; i < 100_000; i++) list.Add(i);
 //  ОТЛИЧНО: Задаем Capacity сразу, выделяя один массив в памяти под нужный объем данных
 var optimizedList = new List<int>(capacity: 100_000);
 for (int i = 0; i < 100_000; i++) optimizedList.Add(i);
+
 ⚠️ Правила модификации и удаления элементов
 Критическая ошибка
 Попытка изменить состав коллекции (удалить или добавить элемент) внутри цикла foreach приведет к генерации исключения System.InvalidOperationException («Collection was modified; enumeration operation may not execute»). Это связано с тем, что Enumerator отслеживает состояние внутренней версии коллекции.
@@ -44,6 +45,7 @@ foreach (var item in fruits)
         fruits.Remove(item); 
     }
 }
+
 Безопасные и правильные подходы
 Использование специализированного метода (Рекомендуется):
 
