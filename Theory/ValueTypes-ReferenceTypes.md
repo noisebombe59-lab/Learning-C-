@@ -56,24 +56,6 @@ Reference Types (Ссылочные типы)
     Console.WriteLine(user1.Name); // Выведет "Антон" (объект-то один и тот же)
     Console.WriteLine(user2.Name); // Выведет "Антон"
 ──────────────────────────────────────────────────────────────────────
-struct vs class — когда что использовать
-
-struct — используй для:
-• Маленьких неизменяемых данных (≤ 16–24 байт)
-• Point, Guid, DateTime, маленькие DTO
-
-class — используй для:
-• Сущностей, сервисов, всего остального
-• Когда нужно наследование или null
-
-    Пример кода
-    public readonly struct Money
-    {
-        public decimal Amount { get; }
-        public string Currency { get; }
-        public Money(decimal amount, string currency) => (Amount, Currency) = (amount, currency);
-    }
-──────────────────────────────────────────────────────────────────────
 Nullability (C# 8+) — обязательно включай в проекте!
 
     Nullable value types
@@ -100,5 +82,4 @@ Nullability (C# 8+) — обязательно включай в проекте!
 • Reference types — изменения через любую ссылку влияют на общий объект.
 • string — reference type, но ведёт себя как value (immutable).
 • Включай <Nullable>enable</Nullable> в .csproj — компилятор поможет избежать NullReferenceException.
-• readonly struct — лучший выбор для маленьких иммутабельных данных.
 ──────────────────────────────────────────────────────────────────────
