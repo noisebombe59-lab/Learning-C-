@@ -110,6 +110,8 @@ var bookTitles = currentAuthor.Books.Select(b => b.Title);
           })
           .ToListAsync();
 
+ Цепочки связей и ограничение FindAsync: Для загрузки глубоких связей (Акция $\rightarrow$ Комментарии $\rightarrow$ Автор) используется связка .Include().ThenInclude(). Метод .FindAsync() не поддерживает .Include(), поэтому для подгрузки связей его всегда заменяют на .FirstOrDefaultAsync().
+
       4. Связи Many-to-Many (Многие-ко-многим)
 Join-таблица (Таблица-прослойка)
 
