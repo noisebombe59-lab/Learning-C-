@@ -220,6 +220,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQ_part5", "LINQ_part5\LI
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASP_NET_Core_Web_API_and_Architecture", "ASP_NET_Core_Web_API_and_Architecture", "{67C2B3C8-5415-4BBA-B029-A7A97338B3F5}"
 	ProjectSection(SolutionItems) = preProject
+		1 тест.md = 1 тест.md
 		Nuget-Пакеты.md = Nuget-Пакеты.md
 		Асинхронность и Результаты CRUD.md = Асинхронность и Результаты CRUD.md
 		Безопасность и Архитектура DTO & DI.md = Безопасность и Архитектура DTO & DI.md
@@ -227,6 +228,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASP_NET_Core_Web_API_and_Ar
 		Основы API и Маршрутизация.md = Основы API и Маршрутизация.md
 		Паттерн Репозиторий.md = Паттерн Репозиторий.md
 		Связи в базе данных Entity Framework.md = Связи в базе данных Entity Framework.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RoadMap", "RoadMap", "{505D5C80-F030-45B3-812E-906892DF989E}"
+	ProjectSection(SolutionItems) = preProject
+		Roadmap.md = Roadmap.md
 	EndProjectSection
 EndProject
 Global
